@@ -1038,6 +1038,7 @@ _PMRAcquireKernelMappingData(PMR *psPMR,
     }
     PVR_ASSERT (psPMR->psFuncTab->pfnReleaseKernelMappingData != NULL);
 
+	PVR_DPF((PVR_DBG_WARNING, "\t\tpsPMR->psFuncTab->pfnAcquireKernelMappingData = %pF = %p\n", (psPMR->psFuncTab->pfnAcquireKernelMappingData), (psPMR->psFuncTab->pfnAcquireKernelMappingData)));
     eError = psPMR->psFuncTab->pfnAcquireKernelMappingData(psPMR->pvFlavourData,
                                                            uiLogicalOffset,
                                                            uiSize,

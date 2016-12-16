@@ -313,6 +313,9 @@ PVRSRV_ERROR RGXPostPowerState (IMG_HANDLE				hDevHandle,
 			if (eError != PVRSRV_OK) return eError;
 #endif
 
+#if defined(PDUMP)
+			PVR_DPF((PVR_DBG_ERROR, "Map an FW IF Init structure, pszAnnotation = %s ", psDevInfo->psRGXFWIfInitMemDesc->psImport->pszAnnotation));
+#endif
 			eError = DevmemAcquireCpuVirtAddr(psDevInfo->psRGXFWIfInitMemDesc,
 			                                  (void **)&psRGXFWInit);
 			if (eError != PVRSRV_OK)
@@ -326,6 +329,9 @@ PVRSRV_ERROR RGXPostPowerState (IMG_HANDLE				hDevHandle,
 			/*
 			 * Check whether the FW has started by polling on bFirmwareStarted flag
 			 */
+#if defined(PDUMP)
+			PVR_DPF((PVR_DBG_ERROR, "Going to pool for 'FW started' flag"));
+#endif
 			if (PVRSRVPollForValueKM((IMG_UINT32 *)&psRGXFWInit->bFirmwareStarted,
 			                         IMG_TRUE,
 			                         0xFFFFFFFF) != PVRSRV_OK)

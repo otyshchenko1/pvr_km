@@ -2499,11 +2499,13 @@ PMRAcquireKernelMappingDataOSMem(PMR_IMPL_PRIVDATA pvPriv,
 	}
 	
 #if !defined(CONFIG_64BIT) || defined(PVRSRV_FORCE_SLOWER_VMAP_ON_64BIT_BUILDS)
+	PVR_DPF((PVR_DBG_WARNING, "\t\t vmap\n"));
 	pvAddress = vmap(&psOSPageArrayData->pagearray[ui32PageOffset],
 	                 ui32PageCount,
 	                 VM_READ | VM_WRITE,
 	                 prot);
 #else
+	PVR_DPF((PVR_DBG_WARNING, "\t\t vm_map_ram\n"));
 	pvAddress = vm_map_ram(&psOSPageArrayData->pagearray[ui32PageOffset],
 						   ui32PageCount,
 						   -1,

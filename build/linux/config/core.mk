@@ -778,6 +778,8 @@ $(eval $(call TunableBothConfigC,PVRSRV_NEED_PVR_STACKTRACE,,\
 Enable this to turn on stack trace functions in release builds._\
 ))
 $(eval $(call TunableBothConfigC,REFCOUNT_DEBUG,))
+$(eval $(call TunableBothConfigC,DEVMEM_DEBUG,))
+$(eval $(call TunableBothConfigC,MMU_OBJECT_REFCOUNT_DEBUGING,))
 $(eval $(call TunableBothConfigC,DC_DEBUG,,\
 Enable debug tracing in the DC (display class) server code))
 $(eval $(call TunableBothConfigC,SCP_DEBUG,,\
