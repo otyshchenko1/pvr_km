@@ -417,6 +417,7 @@ PVRSRVConnectKM(CONNECTION_DATA *psConnection,
 		/*Mask the debug flag option out as we do support combinations of debug vs release in um & km*/
 		ui32BuildOptionsMismatch &= ~OPTIONS_DEBUG_MASK;
 #endif
+#if 0
 		if ( (ui32ClientBuildOptions & ui32BuildOptionsMismatch) != 0)
 		{
 			PVR_LOG(("(FAIL) %s: Mismatch in client-side and KM driver build options; "
@@ -453,6 +454,7 @@ PVRSRVConnectKM(CONNECTION_DATA *psConnection,
 		}
 		if(!psSRVData->sDriverInfo.bIsNoMatch)
 			psSRVData->sDriverInfo.bIsNoMatch = IMG_TRUE;
+#endif
 	}
 	else
 	{

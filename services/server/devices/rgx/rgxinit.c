@@ -3354,6 +3354,7 @@ PVRSRV_ERROR RGXRegisterDevice (PVRSRV_DEVICE_NODE *psDeviceNode)
 	PVRSRVRegisterCmdCompleteNotify(&psDeviceNode->hCmdCompNotify, &RGXScheduleProcessQueuesKM, psDeviceNode);
 
 	psDeviceNode->pfnInitDeviceCompatCheck	= &RGXDevInitCompatCheck;
+	psDeviceNode->pfnInitDeviceCompatCheck	= NULL;
 
 	/* Register callbacks for creation of device memory contexts */
 	psDeviceNode->pfnRegisterMemoryContext = RGXRegisterMemoryContext;
