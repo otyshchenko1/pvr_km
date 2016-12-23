@@ -89,13 +89,14 @@ void OSFlushCPUCacheRangeKM(PVRSRV_DEVICE_NODE *psDevNode,
                             IMG_CPU_PHYADDR sCPUPhysStart,
                             IMG_CPU_PHYADDR sCPUPhysEnd)
 {
-	struct dma_map_ops *dma_ops = get_dma_ops(psDevNode->psDevConfig->pvOSDevice);
+	struct device *dev = psDevNode->psDevConfig->pvOSDevice;
+	struct dma_map_ops *dma_ops = get_dma_ops(dev);
 
 	PVR_UNREFERENCED_PARAMETER(pvVirtStart);
 	PVR_UNREFERENCED_PARAMETER(pvVirtEnd);
 
-	dma_ops->sync_single_for_device(NULL, sCPUPhysStart.uiAddr, sCPUPhysEnd.uiAddr - sCPUPhysStart.uiAddr, DMA_TO_DEVICE);
-	dma_ops->sync_single_for_cpu(NULL, sCPUPhysStart.uiAddr, sCPUPhysEnd.uiAddr - sCPUPhysStart.uiAddr, DMA_FROM_DEVICE);
+	dma_ops->sync_single_for_device(dev, sCPUPhysStart.uiAddr, sCPUPhysEnd.uiAddr - sCPUPhysStart.uiAddr, DMA_TO_DEVICE);
+	dma_ops->sync_single_for_cpu(dev, sCPUPhysStart.uiAddr, sCPUPhysEnd.uiAddr - sCPUPhysStart.uiAddr, DMA_FROM_DEVICE);
 }
 
 void OSCleanCPUCacheRangeKM(PVRSRV_DEVICE_NODE *psDevNode,
@@ -104,12 +105,13 @@ void OSCleanCPUCacheRangeKM(PVRSRV_DEVICE_NODE *psDevNode,
                             IMG_CPU_PHYADDR sCPUPhysStart,
                             IMG_CPU_PHYADDR sCPUPhysEnd)
 {
-	struct dma_map_ops *dma_ops = get_dma_ops(psDevNode->psDevConfig->pvOSDevice);
+	struct device *dev = psDevNode->psDevConfig->pvOSDevice;
+	struct dma_map_ops *dma_ops = get_dma_ops(dev);
 
 	PVR_UNREFERENCED_PARAMETER(pvVirtStart);
 	PVR_UNREFERENCED_PARAMETER(pvVirtEnd);
 
-	dma_ops->sync_single_for_device(NULL, sCPUPhysStart.uiAddr, sCPUPhysEnd.uiAddr - sCPUPhysStart.uiAddr, DMA_TO_DEVICE);
+	dma_ops->sync_single_for_device(dev, sCPUPhysStart.uiAddr, sCPUPhysEnd.uiAddr - sCPUPhysStart.uiAddr, DMA_TO_DEVICE);
 }
 
 void OSInvalidateCPUCacheRangeKM(PVRSRV_DEVICE_NODE *psDevNode,
@@ -118,12 +120,13 @@ void OSInvalidateCPUCacheRangeKM(PVRSRV_DEVICE_NODE *psDevNode,
                                  IMG_CPU_PHYADDR sCPUPhysStart,
                                  IMG_CPU_PHYADDR sCPUPhysEnd)
 {
-	struct dma_map_ops *dma_ops = get_dma_ops(psDevNode->psDevConfig->pvOSDevice);
+	struct device *dev = psDevNode->psDevConfig->pvOSDevice;
+	struct dma_map_ops *dma_ops = get_dma_ops(dev);
 
 	PVR_UNREFERENCED_PARAMETER(pvVirtStart);
 	PVR_UNREFERENCED_PARAMETER(pvVirtEnd);
 
-	dma_ops->sync_single_for_cpu(NULL, sCPUPhysStart.uiAddr, sCPUPhysEnd.uiAddr - sCPUPhysStart.uiAddr, DMA_FROM_DEVICE);
+	dma_ops->sync_single_for_cpu(dev, sCPUPhysStart.uiAddr, sCPUPhysEnd.uiAddr - sCPUPhysStart.uiAddr, DMA_FROM_DEVICE);
 }
 
 PVRSRV_CACHE_OP_ADDR_TYPE OSAddrTypeCPUCacheRangeKM(PVRSRV_CACHE_OP uiCacheOp)
