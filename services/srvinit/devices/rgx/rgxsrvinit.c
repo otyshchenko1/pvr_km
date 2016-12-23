@@ -975,18 +975,6 @@ static PVRSRV_ERROR InitFirmware(SHARED_DEV_CONNECTION hServices,
 	/*
 	 * Get pointer to Firmware image
 	 */
- 
-#ifdef DEBUG
-	{
-		struct device *dev = hServices->psDevConfig->pvOSDevice;
-
-		if (dev == NULL)
-			PVR_DPF((PVR_DBG_ERROR, "\n\t\t%s: DEV IS NULL\n", __func__));
-		else
-			PVR_DPF((PVR_DBG_ERROR, "\n\t\t%s: Device with init_name = <%s>, driver->name = <%s>\n",
-					__func__, dev->init_name, dev->driver->name));
-	}
-#endif
 
 	psRGXFW = RGXLoadFirmware(hServices);
 	if (psRGXFW == NULL)
@@ -1461,18 +1449,6 @@ PVRSRV_ERROR RGXInit(SHARED_DEV_CONNECTION hServices)
 
 	/* HWPerf Ctl allocation handle */
 	IMG_HANDLE hHWPerfDataPMR;
-#endif
-
-#ifdef DEBUG
-	{
-		struct device *dev = hServices->psDevConfig->pvOSDevice;
-
-		if (dev == NULL)
-			PVR_DPF((PVR_DBG_ERROR, "\n\t\t%s: DEV IS NULL\n", __func__));
-		else
-			PVR_DPF((PVR_DBG_ERROR, "\n\t\t%s: Device with init_name = <%s>, driver->name = <%s>\n",
-					__func__, dev->init_name, dev->driver->name));
-	}
 #endif
 
 	/* Services initialisation parameters */

@@ -680,18 +680,6 @@ static PVRSRV_ERROR _PxMemAlloc(MMU_CONTEXT *psMMUContext,
 #endif
 	PVR_ASSERT(psConfig->uiBytesPerEntry != 0);
 
-#ifdef DEBUG
-	{
-		struct device *dev = psDevNode->psDevConfig->pvOSDevice;
-
-		if (dev == NULL)
-			PVR_DPF((PVR_DBG_ERROR, "\n\t\t%s: DEV IS NULL\n", __func__));
-		else
-			PVR_DPF((PVR_DBG_ERROR, "\n\t\t%s: Device with init_name = <%s>, driver->name = <%s>\n",
-					__func__, dev->init_name, dev->driver->name));
-	}
-#endif
-
 	uiBytes = uiNumEntries * psConfig->uiBytesPerEntry;
 	/* We need here the alignment of the previous level because that is the entry for we generate here */
 	uiAlign = 1 << uiLog2Align;
@@ -1970,18 +1958,6 @@ MMU_ContextCreate(PVRSRV_DEVICE_NODE *psDevNode,
 	IMG_UINT32 ui32Size;
 	IMG_CHAR sBuf[40];
 	PVRSRV_ERROR eError = PVRSRV_OK;
-
-#ifdef DEBUG
-	{
-		struct device *dev = psDevNode->psDevConfig->pvOSDevice;
-
-		if (dev == NULL)
-			PVR_DPF((PVR_DBG_ERROR, "\n\t\t%s: DEV IS NULL\n", __func__));
-		else
-			PVR_DPF((PVR_DBG_ERROR, "\n\t\t%s: Device with init_name = <%s>, driver->name = <%s>\n",
-					__func__, dev->init_name, dev->driver->name));
-	}
-#endif
 
 	psConfig = psDevAttrs->psBaseConfig;
 	psDevVAddrConfig = psDevAttrs->psTopLevelDevVAddrConfig;

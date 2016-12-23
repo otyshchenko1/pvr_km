@@ -382,17 +382,6 @@ IMG_INTERNAL PVRSRV_ERROR IMG_CALLCONV BridgeDevmemIntCtxCreate(IMG_HANDLE hBrid
 	DEVMEMINT_CTX * psDevMemServerContextInt;
 	IMG_HANDLE hPrivDataInt;
 
-#ifdef DEBUG
-	{
-		struct device *dev = ((PVRSRV_DEVICE_NODE *)((void*) hBridge))->psDevConfig->pvOSDevice;
-
-		if (dev == NULL)
-			PVR_DPF((PVR_DBG_ERROR, "\n\t\t%s: DEV IS NULL\n", __func__));
-		else
-			PVR_DPF((PVR_DBG_ERROR, "\n\t\t%s: Device with init_name = <%s>, driver->name = <%s>\n",
-					__func__, dev->init_name, dev->driver->name));
-	}
-#endif
 
 	eError =
 		DevmemIntCtxCreate(NULL, (PVRSRV_DEVICE_NODE *)((void*) hBridge)

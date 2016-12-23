@@ -719,18 +719,6 @@ DevmemCreateContext(SHARED_DEV_CONNECTION hDevConnection,
     IMG_HANDLE hPrivData;
     IMG_BOOL bHeapCfgMetaId = (uiHeapBlueprintID == DEVMEM_HEAPCFG_META);
 
-#ifdef DEBUG
-	{
-		struct device *dev = hDevConnection->psDevConfig->pvOSDevice;
-
-		if (dev == NULL)
-			PVR_DPF((PVR_DBG_ERROR, "\n\t\t%s: DEV IS NULL\n", __func__));
-		else
-			PVR_DPF((PVR_DBG_ERROR, "\n\t\t%s: Device with init_name = <%s>, driver->name = <%s>\n",
-					__func__, dev->init_name, dev->driver->name));
-	}
-#endif
-
     if (ppsCtxPtr == NULL)
     {
         eError = PVRSRV_ERROR_INVALID_PARAMS;

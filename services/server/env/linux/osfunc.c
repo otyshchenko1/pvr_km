@@ -269,18 +269,6 @@ PVRSRV_ERROR OSPhyContigPagesClean(PVRSRV_DEVICE_NODE *psDevNode,
 	void* pvVirtAddrStart = kmap(psPage) + uiOffset;
 	IMG_CPU_PHYADDR sPhysStart, sPhysEnd;
 
-#ifdef DEBUG
-	{
-		struct device *dev = psDevNode->psDevConfig->pvOSDevice;
-
-		if (dev == NULL)
-			PVR_DPF((PVR_DBG_ERROR, "\n\t\t%s: DEV IS NULL\n", __func__));
-		else
-			PVR_DPF((PVR_DBG_ERROR, "\n\t\t%s: Device with init_name = <%s>, driver->name = <%s>\n",
-					__func__, dev->init_name, dev->driver->name));
-	}
-#endif
-
 	if (uiLength == 0)
 	{
 		goto e0;

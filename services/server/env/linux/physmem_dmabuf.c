@@ -265,10 +265,6 @@ static PVRSRV_ERROR PMRLockPhysAddressesDmaBuf(PMR_IMPL_PRIVDATA pvPriv)
 	PVRSRV_ERROR eError;
 	IMG_UINT32 i;
 
-	struct device *hwdev = psAttachment->dev;
-	WARN( (hwdev == NULL), "\t\t\t HWDEV is NULL\n");
-
-
 	table = dma_buf_map_attachment(psAttachment, DMA_BIDIRECTIONAL);
 	if (IS_ERR_OR_NULL(table))
 	{
