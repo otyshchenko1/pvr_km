@@ -106,6 +106,18 @@ void OSCleanCPUCacheRangeKM(PVRSRV_DEVICE_NODE *psDevNode,
 {
 	struct dma_map_ops *dma_ops = get_dma_ops(psDevNode->psDevConfig->pvOSDevice);
 
+#ifdef DEBUG
+	{
+		struct device *dev = psDevNode->psDevConfig->pvOSDevice;
+
+		if (dev == NULL)
+			PVR_DPF((PVR_DBG_ERROR, "\n\t\t%s: DEV IS NULL\n", __func__));
+		else
+			PVR_DPF((PVR_DBG_ERROR, "\n\t\t%s: Device with init_name = <%s>, driver->name = <%s>\n",
+					__func__, dev->init_name, dev->driver->name));
+	}
+#endif
+
 	PVR_UNREFERENCED_PARAMETER(pvVirtStart);
 	PVR_UNREFERENCED_PARAMETER(pvVirtEnd);
 

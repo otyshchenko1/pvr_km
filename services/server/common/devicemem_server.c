@@ -321,6 +321,18 @@ DevmemIntCtxCreate(CONNECTION_DATA *psConnection,
 	IMG_HANDLE hPrivDataInt = NULL;
 	MMU_DEVICEATTRIBS      *psMMUDevAttrs;
 
+#ifdef DEBUG
+	{
+		struct device *dev = psDeviceNode->psDevConfig->pvOSDevice;
+
+		if (dev == NULL)
+			PVR_DPF((PVR_DBG_ERROR, "\n\t\t%s: DEV IS NULL\n", __func__));
+		else
+			PVR_DPF((PVR_DBG_ERROR, "\n\t\t%s: Device with init_name = <%s>, driver->name = <%s>\n",
+					__func__, dev->init_name, dev->driver->name));
+	}
+#endif
+
 #if defined(RGX_FEATURE_META)
 	psMMUDevAttrs = psDeviceNode->psMMUDevAttrs;
 	PVR_UNREFERENCED_PARAMETER(bKernelMemoryCtx);
