@@ -696,7 +696,7 @@ $(eval $(call KernelConfigC,DEBUG_LINUX_MEM_AREAS,))
 $(eval $(call KernelConfigC,DEBUG_LINUX_MMAP_AREAS,))
 $(eval $(call KernelConfigC,DEBUG_HANDLEALLOC_KM,))
 $(eval $(call UserConfigC,DLL_METRIC,1))
-$(eval $(call TunableBothConfigC,RGXFW_ALIGNCHECKS,1,\
+$(eval $(call TunableBothConfigC,RGXFW_ALIGNCHECKS,,\
 Enable extra runtime alignment checks at Firmware boot time._\
 ))
 $(eval $(call TunableBothConfigC,PVRSRV_DEBUG_CCB_MAX,))
