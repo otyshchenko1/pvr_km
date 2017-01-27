@@ -230,7 +230,13 @@ static PVRSRV_ERROR OSAcquirePhysPageAddr(PMR_WRAPEXT_DATA  *psAllocPriv)
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 6, 0))
 				current, current->mm,
 #endif
-				uStartAddr, psAllocPriv->i32PageCount, 1, 0, psAllocPriv->ppsPages, NULL);
+				uStartAddr, psAllocPriv->i32PageCount,
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 9, 0))
+				1, 0,
+#else
+				FOLL_WRITE,
+#endif
+				psAllocPriv->ppsPages, NULL);
 	if (psAllocPriv->i32NumPageMapped >= 0)
 	{
 		/* See if we got all the pages we wanted */

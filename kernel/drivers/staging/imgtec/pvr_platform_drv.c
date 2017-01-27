@@ -214,7 +214,8 @@ static int __init pvr_init(void)
 	DRM_DEBUG_DRIVER("\n");
 
 	pvr_drm_platform_driver = pvr_drm_generic_driver;
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 18, 0))
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 18, 0) && \
+	LINUX_VERSION_CODE < KERNEL_VERSION(4, 8, 0))
 	pvr_drm_platform_driver.set_busid = drm_platform_set_busid;
 #endif
 
