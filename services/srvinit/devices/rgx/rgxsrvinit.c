@@ -994,6 +994,9 @@ static PVRSRV_ERROR InitFirmware(SHARED_DEV_CONNECTION hServices,
 	                       &uiFWDataAllocSize,
 	                       &uiFWCorememCodeAllocSize);
 
+	printk("%s RGXGetFWImageAllocSize(&uiFWCodeAllocSize %llu, &uiFWDataAllocSize %llu, &uiFWCorememCodeAllocSize %llu",
+			__FUNCTION__, uiFWCodeAllocSize, uiFWDataAllocSize, uiFWCorememCodeAllocSize);
+
 	eError = BridgeRGXInitAllocFWImgMem(hServices,
 	                                    uiFWCodeAllocSize,
 	                                    uiFWDataAllocSize,
@@ -1018,6 +1021,7 @@ static PVRSRV_ERROR InitFirmware(SHARED_DEV_CONNECTION hServices,
 
 	GetFWConfigFlags(psHints, &ui32FWConfigFlags);
 
+	printk("> BridgeRGXInitFirmware\n");
 	eError = BridgeRGXInitFirmware(hServices,
 	                               &sRGXFwInit,
 	                               psHints->bEnableSignatureChecks,
@@ -1043,6 +1047,7 @@ static PVRSRV_ERROR InitFirmware(SHARED_DEV_CONNECTION hServices,
 	                               psHints->eRGXRDPowerIslandConf,
 	                               psHints->eFirmwarePerf);
 
+	printk("< BridgeRGXInitFirmware\n");
 	if (eError != PVRSRV_OK)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "InitFirmware: PVRSRVRGXInitFirmware failed (%d)", eError));
@@ -1052,6 +1057,7 @@ static PVRSRV_ERROR InitFirmware(SHARED_DEV_CONNECTION hServices,
 	/*
 	 * Acquire pointers to Firmware allocations
 	 */
+	printk("> AcquireHostData\n");
 
 #if !defined(SUPPORT_TRUSTED_DEVICE) || defined(NO_HARDWARE)
 	eError = AcquireHostData(hServices,
@@ -1063,6 +1069,7 @@ static PVRSRV_ERROR InitFirmware(SHARED_DEV_CONNECTION hServices,
 		PVR_DPF((PVR_DBG_ERROR, "InitFirmware: AcquireHostData for FW code failed (%d)", eError));
 		goto release_code;
 	}
+	printk("< AcquireHostData\n");
 #else
 	PVR_UNREFERENCED_PARAMETER(psFWCodeHostMemDesc);
 
@@ -1174,7 +1181,7 @@ static PVRSRV_ERROR InitFirmware(SHARED_DEV_CONNECTION hServices,
 	/*
 	 * Release Firmware allocations and clean up
 	 */
-
+printk("Release Firmware allocations and clean up\n");
 release_corememcode:
 #if defined(RGX_META_COREMEM_CODE) && !defined(SUPPORT_TRUSTED_DEVICE)
 	ReleaseHostData(psFWCorememHostMemDesc);

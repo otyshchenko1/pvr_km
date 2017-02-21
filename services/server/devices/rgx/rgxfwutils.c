@@ -2916,6 +2916,30 @@ _PVRSRVPowerLock_Exit:
 	return eError;
 }
 
+static const char *xen_cmd_to_str(RGXFWIF_KCCB_CMD_TYPE cmd)
+{
+	switch (cmd)
+	{
+	case RGXFWIF_KCCB_CMD_KICK:
+		return "RGXFWIF_KCCB_CMD_KICK";
+	case RGXFWIF_KCCB_CMD_MMUCACHE:
+		return "RGXFWIF_KCCB_CMD_MMUCACHE";
+	case RGXFWIF_KCCB_CMD_POW:
+		return "RGXFWIF_KCCB_CMD_POW";
+	case RGXFWIF_KCCB_CMD_SYNC:
+		return "RGXFWIF_KCCB_CMD_SYNC";
+	case RGXFWIF_KCCB_CMD_SLCFLUSHINVAL:
+		return "RGXFWIF_KCCB_CMD_SLCFLUSHINVAL";
+	case RGXFWIF_KCCB_CMD_CLEANUP:
+		return "RGXFWIF_KCCB_CMD_CLEANUP";
+	case RGXFWIF_KCCB_CMD_HEALTH_CHECK:
+		return "RGXFWIF_KCCB_CMD_HEALTH_CHECK";
+	default:
+		return "unknown";
+	}
+	return "";
+}
+
 static PVRSRV_ERROR RGXSendCommandRaw(PVRSRV_RGXDEV_INFO 	*psDevInfo,
 								 RGXFWIF_DM			eKCCBType,
 								 RGXFWIF_KCCB_CMD	*psKCCBCmd,
@@ -2928,6 +2952,9 @@ static PVRSRV_ERROR RGXSendCommandRaw(PVRSRV_RGXDEV_INFO 	*psDevInfo,
 	IMG_UINT8			*pui8KCCB = psDevInfo->psKernelCCB;
 	IMG_UINT32			ui32NewWriteOffset;
 	IMG_UINT32			ui32OldWriteOffset = psKCCBCtl->ui32WriteOffset;
+
+	printk("%s: eKCCBType %d psKCCBCmd->eCmdType %d (%s)\n",
+		__FUNCTION__, eKCCBType, psKCCBCmd->eCmdType, xen_cmd_to_str(psKCCBCmd->eCmdType));
 
 #if !defined(PDUMP)
 	PVR_UNREFERENCED_PARAMETER(uiPdumpFlags);
@@ -3150,6 +3177,8 @@ static void _RGXScheduleProcessQueuesMISR(void *pvData)
 	PVRSRV_RGXDEV_INFO     *psDevInfo = psDeviceNode->pvDevice;
 	PVRSRV_ERROR           eError;
 	PVRSRV_DEV_POWER_STATE ePowerState;
+
+	printk("%s\n", __FUNCTION__);
 
 	/* We don't need to acquire the BridgeLock as this power transition won't
 	   send a command to the FW */

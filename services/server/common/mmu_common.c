@@ -1300,9 +1300,9 @@ static PVRSRV_ERROR _MMU_AllocLevel(MMU_CONTEXT *psMMUContext,
 	/* Sanity check */
 	PVR_ASSERT(*pui32CurrentLevel < MMU_MAX_LEVEL);
 
-	MMU_OBJ_DBG((PVR_DBG_ERROR, "_MMU_AllocLevel: level = %d, range %d - %d, refcount = %d",
+	printk("_MMU_AllocLevel: level = %d, range %d - %d, refcount = %d\n",
 				aeMMULevel[uiThisLevel], uiStartIndex,
-				uiEndIndex, psLevel->ui32RefCount));
+				uiEndIndex, psLevel->ui32RefCount);
 
 	/* Go from uiStartIndex to uiEndIndex through the Px */
 	for (i = uiStartIndex;i < uiEndIndex;i++) 
@@ -2174,7 +2174,7 @@ MMU_Alloc (MMU_CONTEXT *psMMUContext,
 	PVR_UNREFERENCED_PARAMETER(uDevVAddrAlignment);
 #endif
 
-	PVR_DPF ((PVR_DBG_MESSAGE, "MMU_Alloc: uSize=0x%010llx, uiProtFlags=0x%x, align=0x%010llx", uSize, uiProtFlags, uDevVAddrAlignment));
+	printk ("MMU_Alloc: uSize=0x%010llx, uiProtFlags=0x%x, align=0x%010llx\n", uSize, uiProtFlags, uDevVAddrAlignment);
 
 	/* check params */
 	if (!psMMUContext || !psDevVAddr || !puActualSize)
