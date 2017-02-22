@@ -311,12 +311,8 @@ static IMG_BOOL RGX_LISRHandler (void *pvData)
 		OSWriteHWReg32(psDevInfo->pvRegsBaseKM, RGX_CR_OCP_IRQSTATUS_2, RGX_CR_OCP_IRQSTATUS_2_RGX_IRQ_STATUS_EN);
 #endif
 
-		printk("> %s psRGXFWIfTraceBuf->aui32InterruptCount %d psDevInfo->aui32SampleIRQCount %d\n",
-				__FUNCTION__, psRGXFWIfTraceBuf->aui32InterruptCount[0], psDevInfo->aui32SampleIRQCount[0]);
 		bInterruptProcessed = SampleIRQCount(psRGXFWIfTraceBuf->aui32InterruptCount, 
 											 psDevInfo->aui32SampleIRQCount);
-		printk("< %s psRGXFWIfTraceBuf->aui32InterruptCount %d psDevInfo->aui32SampleIRQCount %d\n",
-				__FUNCTION__, psRGXFWIfTraceBuf->aui32InterruptCount[0], psDevInfo->aui32SampleIRQCount[0]);
 
 		if (!bInterruptProcessed)
 		{
@@ -895,7 +891,7 @@ PVRSRV_ERROR PVRSRVRGXInitDevPart2KM (CONNECTION_DATA       *psConnection,
 	PVR_UNREFERENCED_PARAMETER(psFWCorePMR);
 	PVR_UNREFERENCED_PARAMETER(psHWPerfPMR);
 
-	printk("RGX Initialisation Part 2\n");
+	PDUMPCOMMENT("RGX Initialisation Part 2");
 
 	/*
 	 * Map RGX Registers
@@ -2454,7 +2450,6 @@ PVRSRV_ERROR PVRSRVRGXInitAllocFWImgMemKM(CONNECTION_DATA      *psConnection,
 
 	PVR_UNREFERENCED_PARAMETER(psConnection);
 
-	printk("%s +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n", __FUNCTION__);
 	eError = RGXInitCreateFWKernelMemoryContext(psDeviceNode);
 	if (eError != PVRSRV_OK)
 	{

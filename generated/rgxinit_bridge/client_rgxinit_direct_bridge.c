@@ -88,10 +88,6 @@ IMG_INTERNAL PVRSRV_ERROR IMG_CALLCONV BridgeRGXInitAllocFWImgMem(IMG_HANDLE hBr
 	*phFWCodePMR = psFWCodePMRInt;
 	*phFWDataPMR = psFWDataPMRInt;
 	*phFWCorememPMR = psFWCorememPMRInt;
-
-	printk("%s psFWCodeDevVAddrBase %llx\n", __FUNCTION__, virt_to_phys(psFWCodeDevVAddrBase));
-	printk("%s psFWDataDevVAddrBase %llx\n", __FUNCTION__, virt_to_phys(psFWDataDevVAddrBase));
-	printk("%s psFWCorememDevVAddrBase %llx\n", __FUNCTION__, virt_to_phys(psFWCorememDevVAddrBase));
 	return eError;
 }
 

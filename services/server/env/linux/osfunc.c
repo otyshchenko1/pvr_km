@@ -150,8 +150,6 @@ PVRSRV_ERROR OSPhyContigPagesAlloc(PVRSRV_DEVICE_NODE *psDevNode, size_t uiSize,
 	psMemHandle->ui32Order = ui32Order;
 	sCpuPAddr.uiAddr =  IMG_CAST_TO_CPUPHYADDR_UINT(page_to_phys(psPage));
 
-	printk("%s sCpuPAddr.uiAddr %llx psMemHandle->ui32Order %d\n",
-			__FUNCTION__, sCpuPAddr.uiAddr, psMemHandle->ui32Order);
 	/*
 	 * Even when more pages are allocated as base MMU object we still need one single physical address because
 	 * they are physically contiguous.
@@ -206,8 +204,6 @@ PVRSRV_ERROR OSPhyContigPagesMap(PVRSRV_DEVICE_NODE *psDevNode, PG_HANDLE *psMem
 {
 	size_t actualSize = 1 << (PAGE_SHIFT + psMemHandle->ui32Order);
 	*pvPtr = kmap((struct page*)psMemHandle->u.pvHandle);
-
-	printk("%s psDevPAddr->uiAddr %llx\n", __FUNCTION__, psDevPAddr->uiAddr);
 
 	PVR_UNREFERENCED_PARAMETER(psDevPAddr);
 
@@ -1004,8 +1000,6 @@ OSMapPhysToLin(IMG_CPU_PHYADDR BasePAddr,
 {
 	void *pvLinAddr;
 
-	printk("%s BasePAddr.uiAddr %llx\n", __FUNCTION__, BasePAddr.uiAddr);
-	dump_stack();
 	if (ui32MappingFlags & ~(PVRSRV_MEMALLOCFLAG_CPU_CACHE_MODE_MASK))
 	{
 		PVR_ASSERT(!"Found non-cpu cache mode flag when mapping to the cpu");
