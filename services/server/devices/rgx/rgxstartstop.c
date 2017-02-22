@@ -52,6 +52,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "rgxdevice.h"
 #endif
 
+#include <asm/memory.h>
 
 #if !defined(FIX_HW_BRN_37453)
 /*!
@@ -496,6 +497,12 @@ static void _RGXInitBIF_META(const void *hPrivate)
 	RGXCommentLogPower(hPrivate, "RGX firmware MMU Page Catalogue");
 
 	/* Write the cat-base address */
+	{
+		char *buf = phys_to_virt(sPCAddr.uiAddr);
+	print_hex_dump(KERN_ERR, "", DUMP_PREFIX_ADDRESS,
+	                     4, 4,
+	                     buf, 4096, 0);
+	}
 	RGXWriteKernelMMUPC64(hPrivate,
 	                      RGX_CR_BIF_CAT_BASE0,
 	                      RGX_CR_BIF_CAT_BASE0_ADDR_ALIGNSHIFT,

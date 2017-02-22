@@ -1558,13 +1558,22 @@ PVRSRV_ERROR RGXSetupFirmware(PVRSRV_DEVICE_NODE       *psDeviceNode,
 						/* FIXME: Change to Cached */
 
 
-	PDUMPCOMMENT("Allocate RGXFWIF_INIT structure");
+	printk("Allocate RGXFWIF_INIT structure, sizeof(RGXFWIF_INIT) %lu\n", sizeof(RGXFWIF_INIT));
 
 	eError = DevmemFwAllocate(psDevInfo,
 							sizeof(RGXFWIF_INIT),
 							uiMemAllocFlags,
 							"FwInitStructure",
 							&psDevInfo->psRGXFWIfInitMemDesc);
+	{
+		DEVMEM_MEMDESC			*d = psDevInfo->psRGXFWIfInitMemDesc;
+		DEVMEM_HEAP *d1 = psDevInfo->psFirmwareHeap;
+
+		printk("999999999999999999999999999999999999999999999999999999999999999\n");
+		printk("%s psDevInfo->psFirmwareHeap->sBaseAddress.uiAddr %llx\n", __FUNCTION__, d1->sBaseAddress.uiAddr);
+		printk("uiAllocSize %llu sDevVAddr.uiAddr %llx\n", d->uiAllocSize, d->sDeviceMemDesc.sDevVAddr.uiAddr);
+		printk("virt_to_phys(d->sCPUMemDesc.pvCPUVAddr) %llx", virt_to_phys(d->sCPUMemDesc.pvCPUVAddr));
+	}
 
 	if (eError != PVRSRV_OK)
 	{

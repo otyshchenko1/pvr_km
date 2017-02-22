@@ -408,8 +408,10 @@ static PVRSRV_ERROR _MMU_PhysMem_RAImportAlloc(RA_PERARENA_HANDLE hArenaHandle,
 		goto e0;
 	}
 
+printk("%s uiSize %llu call psDevNode->pfnDevPxAlloc\n", __FUNCTION__, uiSize);
 	eError = psDevNode->pfnDevPxAlloc(psDevNode, TRUNCATE_64BITS_TO_SIZE_T(uiSize), &psMapping->sMemHandle,
 										&psMapping->sDevPAddr);
+printk("%s psMapping->sDevPAddr %llx\n", __FUNCTION__, psMapping->sDevPAddr.uiAddr);
 	if (eError != PVRSRV_OK)
 	{
 		goto e1;
@@ -497,6 +499,8 @@ static PVRSRV_ERROR _MMU_PhysMemAlloc(MMU_PHYSMEM_CONTEXT *psCtx,
 		return PVRSRV_ERROR_INVALID_PARAMS;
 	}
 
+	printk("%s allocate from psCtx->pszPhysMemRAName %s", __FUNCTION__,
+		psCtx->pszPhysMemRAName);
 	eError = RA_Alloc(psCtx->psPhysMemRA,
 	                  uiBytes,
 	                  RA_NO_IMPORT_MULTIPLIER,
@@ -506,6 +510,7 @@ static PVRSRV_ERROR _MMU_PhysMemAlloc(MMU_PHYSMEM_CONTEXT *psCtx,
 	                  &uiPhysAddr,
 	                  NULL,
 	                  (RA_PERISPAN_HANDLE *) &psMemDesc->psMapping);
+	printk("%s uiPhysAddr %llx uiBytes %lu", __FUNCTION__, uiPhysAddr, uiBytes);
 	if(PVRSRV_OK != eError)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "_MMU_PhysMemAlloc: ERROR call to RA_Alloc() failed"));
@@ -518,6 +523,7 @@ static PVRSRV_ERROR _MMU_PhysMemAlloc(MMU_PHYSMEM_CONTEXT *psCtx,
 
 	if (psMemDesc->psMapping->uiCpuVAddrRefCount == 0)
 	{
+		printk("%s psCtx->psDevNode->pfnDevPxMap\n", __FUNCTION__);
 		eError = psCtx->psDevNode->pfnDevPxMap(psCtx->psDevNode,
 		                                       &psMemDesc->psMapping->sMemHandle,
 		                                       psMemDesc->psMapping->uiSize,
@@ -685,6 +691,7 @@ static PVRSRV_ERROR _PxMemAlloc(MMU_CONTEXT *psMMUContext,
 	uiAlign = 1 << uiLog2Align;
 
 	/*  allocate the object */
+	printk("%s allocate the object\n", __FUNCTION__);
 	eError = _MMU_PhysMemAlloc(psMMUContext->psPhysMemCtx,
 								psMemDesc, uiBytes, uiAlign);
 	if(eError != PVRSRV_OK)
@@ -1666,6 +1673,7 @@ static void _MMU_PutLevelData(MMU_CONTEXT *psMMUContext, IMG_HANDLE hPriv)
 {
 	MMU_DEVICEATTRIBS *psDevAttrs = psMMUContext->psDevAttrs;
 
+	printk("%s\n", __FUNCTION__);
 	psDevAttrs->pfnPutPageSizeConfiguration(hPriv);
 }
 
@@ -1702,19 +1710,16 @@ _AllocPageTables(MMU_CONTEXT *psMMUContext,
 	IMG_HANDLE hPriv;
 	IMG_UINT32 ui32CurrentLevel = 0;
 
-
-	PVR_DPF((PVR_DBG_ALLOC,
-			 "_AllocPageTables: vaddr range: 0x%010llx:0x%010llx",
+	printk(
+			 "_AllocPageTables: vaddr range: 0x%010llx:0x%010llx\n",
 			 sDevVAddrStart.uiAddr,
 			 sDevVAddrEnd.uiAddr
-			 ));
+			 );
 
-#if defined(PDUMP)
-	PDUMPCOMMENT("Allocating page tables for %llu bytes virtual range: 0x%010llX to 0x%010llX",
+	printk("Allocating page tables for %llu bytes virtual range: 0x%010llX to 0x%010llX\n",
 				(IMG_UINT64)sDevVAddrEnd.uiAddr - (IMG_UINT64)sDevVAddrStart.uiAddr,
                  (IMG_UINT64)sDevVAddrStart.uiAddr,
                  (IMG_UINT64)sDevVAddrEnd.uiAddr);
-#endif
 
 	_MMU_GetLevelData(psMMUContext, sDevVAddrStart, sDevVAddrEnd,
 						(IMG_UINT32) uiLog2DataPageSize, auiStartArray, auiEndArray,
@@ -2016,6 +2021,7 @@ MMU_ContextCreate(PVRSRV_DEVICE_NODE *psDevNode,
 	/* 
 	  Allocate physmem context and set it up
 	 */
+printk("%s Allocate physmem context and set it up\n", __FUNCTION__);
 	psCtx = OSAllocZMem(sizeof(MMU_PHYSMEM_CONTEXT));
 	if (psCtx == NULL)
 	{
@@ -2028,6 +2034,7 @@ MMU_ContextCreate(PVRSRV_DEVICE_NODE *psDevNode,
 	psCtx->psDevNode = psDevNode;
 
 	OSSNPrintf(sBuf, sizeof(sBuf)-1, "pgtables %p", psCtx);
+printk("%s PhysMemRAName: %s\n", __FUNCTION__, sBuf);
 	psCtx->uiPhysMemRANameAllocSize = OSStringLength(sBuf)+1;
 	psCtx->pszPhysMemRAName = OSAllocMem(psCtx->uiPhysMemRANameAllocSize);
 	if (psCtx->pszPhysMemRAName == NULL)
@@ -2062,6 +2069,7 @@ MMU_ContextCreate(PVRSRV_DEVICE_NODE *psDevNode,
 	         might request the base object address so we allocate
 	         it up front.
 	*/
+	printk("%s allocate the base level object\n", __FUNCTION__);
 	if (_PxMemAlloc(psMMUContext,
 							ui32BaseObjects,
 							psConfig,
@@ -2073,7 +2081,6 @@ MMU_ContextCreate(PVRSRV_DEVICE_NODE *psDevNode,
 		eError = PVRSRV_ERROR_OUT_OF_MEMORY;
 		goto e4;
 	}
-
 	psMMUContext->sBaseLevelInfo.ui32NumOfEntries = ui32BaseObjects;
 	psMMUContext->sBaseLevelInfo.ui32RefCount = 0;
 
@@ -2174,7 +2181,8 @@ MMU_Alloc (MMU_CONTEXT *psMMUContext,
 	PVR_UNREFERENCED_PARAMETER(uDevVAddrAlignment);
 #endif
 
-	printk ("MMU_Alloc: uSize=0x%010llx, uiProtFlags=0x%x, align=0x%010llx\n", uSize, uiProtFlags, uDevVAddrAlignment);
+	printk ("MMU_Alloc: psDevVAddr %llx uSize=0x%010llx, uiProtFlags=0x%x, align=0x%010llx\n",
+			psDevVAddr->uiAddr, uSize, uiProtFlags, uDevVAddrAlignment);
 
 	/* check params */
 	if (!psMMUContext || !psDevVAddr || !puActualSize)

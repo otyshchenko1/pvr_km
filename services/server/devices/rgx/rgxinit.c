@@ -318,6 +318,10 @@ static IMG_BOOL RGX_LISRHandler (void *pvData)
 		printk("< %s psRGXFWIfTraceBuf->aui32InterruptCount %d psDevInfo->aui32SampleIRQCount %d\n",
 				__FUNCTION__, psRGXFWIfTraceBuf->aui32InterruptCount[0], psDevInfo->aui32SampleIRQCount[0]);
 
+		printk("psRGXFWIfTraceBuf %llx aui32InterruptCount %llx psDevInfo %llx aui32SampleIRQCount %llx\n",
+			virt_to_phys(psRGXFWIfTraceBuf), virt_to_phys(psRGXFWIfTraceBuf->aui32InterruptCount),
+			virt_to_phys(psDevInfo), virt_to_phys(psDevInfo->aui32SampleIRQCount));
+
 		if (!bInterruptProcessed)
 		{
 #if defined(PVRSRV_DEBUG_LISR_EXECUTION)
@@ -767,6 +771,7 @@ static PVRSRV_ERROR RGXSetPowerParams(PVRSRV_RGXDEV_INFO   *psDevInfo,
 		}
 
 		psDevInfo->sPowerParams.sPCAddr = sKernelMMUCtxPCAddr;
+		printk("RGXSetPowerParams: Kernel MMU Ctx page catalog at %llx\n", sKernelMMUCtxPCAddr.uiAddr);
 	}
 #else
 	{
