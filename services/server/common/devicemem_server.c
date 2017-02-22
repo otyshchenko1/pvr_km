@@ -347,11 +347,9 @@ DevmemIntCtxCreate(CONNECTION_DATA *psConnection,
 
 	/* Call down to MMU context creation */
 
-   	printk("> %s Call down to MMU context creation\n", __FUNCTION__);
    	eError = MMU_ContextCreate(psDeviceNode,
                                    &psDevmemCtx->psMMUContext,
                                    psMMUDevAttrs);
-   	printk("< %s Call down to MMU context creation\n", __FUNCTION__);
 	if (eError != PVRSRV_OK)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: MMU_ContextCreate failed", __FUNCTION__));

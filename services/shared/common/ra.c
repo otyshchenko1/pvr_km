@@ -1026,7 +1026,7 @@ RA_Create (IMG_CHAR *name,
 		return NULL;
 	}
 	
-	printk ("RA_Create: name='%s'\n", name);
+	PVR_DPF ((PVR_DBG_MESSAGE, "RA_Create: name='%s'", name));
 
 	pArena = OSAllocMem(sizeof (*pArena));
     if (pArena == NULL)
