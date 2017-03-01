@@ -168,6 +168,9 @@ PVRSRV_ERROR OSPhyContigPagesAlloc(PVRSRV_DEVICE_NODE *psDevNode, size_t uiSize,
 #endif
 #endif
 
+	printk("%s psDevPAddr.uiAddr %llx\n", __FUNCTION__, psDevPAddr->uiAddr);
+
+
 	return PVRSRV_OK;
 }
 
@@ -1000,6 +1003,7 @@ OSMapPhysToLin(IMG_CPU_PHYADDR BasePAddr,
 {
 	void *pvLinAddr;
 
+	printk("%s BasePAddr.uiAddr %llx\n", __FUNCTION__, BasePAddr.uiAddr);
 	if (ui32MappingFlags & ~(PVRSRV_MEMALLOCFLAG_CPU_CACHE_MODE_MASK))
 	{
 		PVR_ASSERT(!"Found non-cpu cache mode flag when mapping to the cpu");

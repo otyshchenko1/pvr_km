@@ -311,9 +311,21 @@ static IMG_BOOL RGX_LISRHandler (void *pvData)
 		OSWriteHWReg32(psDevInfo->pvRegsBaseKM, RGX_CR_OCP_IRQSTATUS_2, RGX_CR_OCP_IRQSTATUS_2_RGX_IRQ_STATUS_EN);
 #endif
 
+		printk("%s >---------------------------- FW reports %u dev has %u\n", __FUNCTION__,
+				psRGXFWIfTraceBuf->aui32InterruptCount[0],
+												   psDevInfo->aui32SampleIRQCount[0]);
+
+
 		bInterruptProcessed = SampleIRQCount(psRGXFWIfTraceBuf->aui32InterruptCount, 
 											 psDevInfo->aui32SampleIRQCount);
-
+		printk("%s <---------------------------- FW reports %u dev has %u\n", __FUNCTION__,
+				psRGXFWIfTraceBuf->aui32InterruptCount[0],
+												   psDevInfo->aui32SampleIRQCount[0]);
+#if 0
+		 printk("psRGXFWIfTraceBuf %llx aui32InterruptCount %llx psDevInfo %llx aui32SampleIRQCount %llx\n",
+		                       virt_to_phys(psRGXFWIfTraceBuf), virt_to_phys(psRGXFWIfTraceBuf->aui32InterruptCount),
+		                       virt_to_phys(psDevInfo), virt_to_phys(psDevInfo->aui32SampleIRQCount));
+#endif
 		if (!bInterruptProcessed)
 		{
 #if defined(PVRSRV_DEBUG_LISR_EXECUTION)
@@ -1410,7 +1422,7 @@ PVRSRV_ERROR RGXAllocateFWCodeRegion(PVRSRV_DEVICE_NODE *psDeviceNode,
 	uiMemAllocFlags |= PVRSRV_MEMALLOCFLAG_CPU_WRITE_COMBINE |
 	                   PVRSRV_MEMALLOCFLAG_ZERO_ON_ALLOC;
 
-	PDUMPCOMMENT("Allocate and export code memory for fw");
+	printk("Allocate and export code memory for fw\n");
 
 	eError = DevmemFwAllocateExportable(psDeviceNode,
 	                                    ui32FWCodeAllocSize,
@@ -1418,6 +1430,7 @@ PVRSRV_ERROR RGXAllocateFWCodeRegion(PVRSRV_DEVICE_NODE *psDeviceNode,
 	                                    uiMemAllocFlags,
 	                                    "FwExCodeRegion",
 	                                    &psDevInfo->psRGXFWCodeMemDesc);
+	printk("%s psDevInfo->psRGXFWCodeMemDesc %llx\n", __FUNCTION__, psDevInfo->psRGXFWCodeMemDesc->sDeviceMemDesc.sDevVAddr.uiAddr);
 	return eError;
 #else
 	PDUMPCOMMENT("Import secure code memory for fw");
@@ -2520,7 +2533,7 @@ PVRSRV_ERROR PVRSRVRGXInitAllocFWImgMemKM(CONNECTION_DATA      *psConnection,
 	                  PVRSRV_MEMALLOCFLAG_CPU_WRITE_COMBINE |
 	                  PVRSRV_MEMALLOCFLAG_ZERO_ON_ALLOC;
 
-	PDUMPCOMMENT("Allocate and export data memory for fw");
+	printk("Allocate and export data memory for fw\n");
 
 	eError = DevmemFwAllocateExportable(psDeviceNode,
 										uiFWDataLen,
@@ -2528,6 +2541,7 @@ PVRSRV_ERROR PVRSRVRGXInitAllocFWImgMemKM(CONNECTION_DATA      *psConnection,
 										uiMemAllocFlags,
 										"FwExDataRegion",
 	                                    &psDevInfo->psRGXFWDataMemDesc);
+	printk("%s psDevInfo->psRGXFWDataMemDesc %llx\n", __FUNCTION__, psDevInfo->psRGXFWDataMemDesc->sDeviceMemDesc.sDevVAddr.uiAddr);
 	if (eError != PVRSRV_OK)
 	{
 		PVR_DPF((PVR_DBG_ERROR,"Failed to allocate fw data mem (%u)",
@@ -2567,7 +2581,7 @@ PVRSRV_ERROR PVRSRVRGXInitAllocFWImgMemKM(CONNECTION_DATA      *psConnection,
 			PVRSRV_MEMALLOCFLAG_CPU_WRITE_COMBINE |
 			PVRSRV_MEMALLOCFLAG_ZERO_ON_ALLOC;
 
-		PDUMPCOMMENT("Allocate and export coremem memory for fw");
+		printk("Allocate and export coremem memory for fw\n");
 
 		eError = DevmemFwAllocateExportable(psDeviceNode,
 				uiFWCorememLen,
@@ -2575,6 +2589,8 @@ PVRSRV_ERROR PVRSRVRGXInitAllocFWImgMemKM(CONNECTION_DATA      *psConnection,
 				uiMemAllocFlags,
 				"FwExCorememRegion",
 				&psDevInfo->psRGXFWCorememMemDesc);
+		printk("%s psDevInfo->psRGXFWCorememMemDesc %llx\n", __FUNCTION__, psDevInfo->psRGXFWCorememMemDesc->sDeviceMemDesc.sDevVAddr.uiAddr);
+
 		if (eError != PVRSRV_OK)
 		{
 			PVR_DPF((PVR_DBG_ERROR,"Failed to allocate fw coremem mem, size: %lld, flags: %x (%u)",

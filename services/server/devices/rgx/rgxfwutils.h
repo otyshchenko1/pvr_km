@@ -106,7 +106,6 @@ static INLINE PVRSRV_ERROR DevmemFwAllocate(PVRSRV_RGXDEV_INFO *psDevInfo,
 		PVR_DPF_RETURN_RC(eError);
 	}
 
-
 	PVR_DPF_RETURN_RC(eError);
 }
 

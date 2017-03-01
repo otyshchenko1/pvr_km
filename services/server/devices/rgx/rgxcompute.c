@@ -63,6 +63,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "rgx_memallocflags.h"
 #include "rgxsync.h"
 
+#include "devicemem.h"
+#include "devicemem_pdump.h"
+#include "devicemem_server.h"
+#include "devicemem_utils.h"
+
 struct _RGX_SERVER_COMPUTE_CONTEXT_ {
 	PVRSRV_DEVICE_NODE			*psDeviceNode;
 	RGX_SERVER_COMMON_CONTEXT	*psServerCommonContext;
@@ -117,13 +122,16 @@ PVRSRV_ERROR PVRSRVRGXCreateComputeContextKM(CONNECTION_DATA			*psConnection,
 		Allocate device memory for the firmware GPU context suspend state.
 		Note: the FW reads/writes the state to memory by accessing the GPU register interface.
 	*/
-	PDUMPCOMMENT("Allocate RGX firmware compute context suspend state");
+	printk("Allocate RGX firmware compute context suspend state\n");
 
 	eError = DevmemFwAllocate(psDevInfo,
 							  sizeof(RGXFWIF_COMPUTECTX_STATE),
 							  RGX_FWCOMCTX_ALLOCFLAGS,
 							  "FwComputeContextState",
 							  &psComputeContext->psFWComputeContextStateMemDesc);
+	printk("%s CPU %llx Dev %llx\n", __FUNCTION__, virt_to_phys(psComputeContext->psFWComputeContextStateMemDesc->sCPUMemDesc.pvCPUVAddr),
+			psComputeContext->psFWComputeContextStateMemDesc->sDeviceMemDesc.sDevVAddr.uiAddr);
+
 
 	if (eError != PVRSRV_OK)
 	{
