@@ -235,7 +235,7 @@ static PVRSRV_ERROR RGXFWSetupSignatureChecks(PVRSRV_RGXDEV_INFO* psDevInfo,
 									  PVRSRV_MEMALLOCFLAG_ZERO_ON_ALLOC;
 
 	/* Allocate memory for the checks */
-	printk("Allocate memory for %s signature checks\n", pszBufferName);
+	PDUMPCOMMENT("Allocate memory for %s signature checks", pszBufferName);
 	eError = DevmemFwAllocate(psDevInfo,
 							ui32SigChecksBufSize,
 							uiMemAllocFlags,
@@ -254,8 +254,6 @@ static PVRSRV_ERROR RGXFWSetupSignatureChecks(PVRSRV_RGXDEV_INFO* psDevInfo,
 						  *ppsSigChecksMemDesc,
 						  0, RFW_FWADDR_NOREF_FLAG);
 
-	printk("%s ppsSigChecksMemDesc CPU %llx Dev %llx\n", __FUNCTION__, virt_to_phys((*ppsSigChecksMemDesc)->sCPUMemDesc.pvCPUVAddr),
-			(*ppsSigChecksMemDesc)->sDeviceMemDesc.sDevVAddr.uiAddr);
 	DevmemPDumpLoadMem(	*ppsSigChecksMemDesc,
 						0,
 						ui32SigChecksBufSize,
@@ -555,7 +553,7 @@ PVRSRV_ERROR FWCommonContextAllocate(CONNECTION_DATA *psConnection,
 
 	if (psAllocatedMemDesc)
 	{
-		printk("Using existing MemDesc for Rogue firmware %s context (offset = %d)\n",
+		PDUMPCOMMENT("Using existing MemDesc for Rogue firmware %s context (offset = %d)",
 					 aszCCBRequestors[eRGXCCBRequestor][REQ_PDUMP_COMMENT],
 					 ui32AllocatedOffset);
 		ui32FWCommonContextOffset = ui32AllocatedOffset;
@@ -565,7 +563,7 @@ PVRSRV_ERROR FWCommonContextAllocate(CONNECTION_DATA *psConnection,
 	else
 	{
 		/* Allocate device memory for the firmware context */
-		printk("Allocate Rogue firmware %s context\n", aszCCBRequestors[eRGXCCBRequestor][REQ_PDUMP_COMMENT]);
+		PDUMPCOMMENT("Allocate Rogue firmware %s context", aszCCBRequestors[eRGXCCBRequestor][REQ_PDUMP_COMMENT]);
 		eError = DevmemFwAllocate(psDevInfo,
 								sizeof(*psFWCommonContext),
 								RGX_FWCOMCTX_ALLOCFLAGS,
@@ -627,13 +625,9 @@ PVRSRV_ERROR FWCommonContextAllocate(CONNECTION_DATA *psConnection,
 	RGXSetFirmwareAddress(&psFWCommonContext->psCCB,
 						  psServerCommonContext->psClientCCBMemDesc,
 						  0, RFW_FWADDR_FLAG_NONE);
-	printk("%s psFWCommonContext->psCCB CPU %llx Dev %llx\n", __FUNCTION__, virt_to_phys(psServerCommonContext->psClientCCBMemDesc->sCPUMemDesc.pvCPUVAddr),
-		psServerCommonContext->psClientCCBMemDesc->sDeviceMemDesc.sDevVAddr.uiAddr);
 	RGXSetFirmwareAddress(&psFWCommonContext->psCCBCtl,
 						  psServerCommonContext->psClientCCBCtrlMemDesc,
 						  0, RFW_FWADDR_FLAG_NONE);
-	printk("%s psFWCommonContext->psCCBCtl CPU %llx Dev %llx\n", __FUNCTION__, virt_to_phys(psServerCommonContext->psClientCCBCtrlMemDesc->sCPUMemDesc.pvCPUVAddr),
-			psServerCommonContext->psClientCCBCtrlMemDesc->sDeviceMemDesc.sDevVAddr.uiAddr);
 #if defined(RGX_FEATURE_META_DMA)
 	RGXSetMetaDMAAddress(&psFWCommonContext->sCCBMetaDMAAddr,
 	                     psServerCommonContext->psClientCCBMemDesc,
@@ -1142,8 +1136,6 @@ static PVRSRV_ERROR RGXSetupFirmwareCCB(PVRSRV_RGXDEV_INFO 	*psDevInfo,
 						  psDevInfo->psFirmwareCCBMemDesc,
 						  0, RFW_FWADDR_NOREF_FLAG);
 
-	printk("%s psFirmwareCCB->ui32Addr %x\n", __FUNCTION__, psRGXFWInit->psFirmwareCCB.ui32Addr);
-	printk("RGXFWIF_INIT = %lu\n", sizeof(RGXFWIF_INIT));
 	/*
 	 * Pdump the kernel CCB control.
 	 */
@@ -1566,7 +1558,7 @@ PVRSRV_ERROR RGXSetupFirmware(PVRSRV_DEVICE_NODE       *psDeviceNode,
 						/* FIXME: Change to Cached */
 
 
-	printk("Allocate RGXFWIF_INIT structure\n");
+	PDUMPCOMMENT("Allocate RGXFWIF_INIT structure");
 
 	eError = DevmemFwAllocate(psDevInfo,
 							sizeof(RGXFWIF_INIT),
@@ -1574,7 +1566,6 @@ PVRSRV_ERROR RGXSetupFirmware(PVRSRV_DEVICE_NODE       *psDeviceNode,
 							"FwInitStructure",
 							&psDevInfo->psRGXFWIfInitMemDesc);
 
-	printk("%s psDevInfo->psRGXFWIfInitMemDesc %llx\n", __FUNCTION__, psDevInfo->psRGXFWIfInitMemDesc->sDeviceMemDesc.sDevVAddr.uiAddr);
 	if (eError != PVRSRV_OK)
 	{
 		PVR_DPF((PVR_DBG_ERROR,"RGXSetupFirmware: Failed to allocate %u bytes for fw if ctl (%u)",
@@ -1605,10 +1596,6 @@ PVRSRV_ERROR RGXSetupFirmware(PVRSRV_DEVICE_NODE       *psDeviceNode,
 	                      psDevInfo->psRGXFWIfInitMemDesc,
 	                      0, RFW_FWADDR_NOREF_FLAG);
 	*psRGXFWInitFWAddr = psDevInfo->sFWInitFWAddr;
-
-printk("%s sFWInitFWAddr sDevVAddr %llx pvCPUVAddr %llx\n", __FUNCTION__, psDevInfo->psRGXFWIfInitMemDesc->sDeviceMemDesc.sDevVAddr.uiAddr,
-		virt_to_phys(psDevInfo->psRGXFWIfInitMemDesc->sCPUMemDesc.pvCPUVAddr));
-
 
 	/* FW trace control structure */
 	uiMemAllocFlags =	PVRSRV_MEMALLOCFLAG_DEVICE_FLAG(PMMETA_PROTECT) |
@@ -2010,12 +1997,6 @@ printk("%s sFWInitFWAddr sDevVAddr %llx pvCPUVAddr %llx\n", __FUNCTION__, psDevI
 
 	eError = SyncPrimGetFirmwareAddr(psDevInfo->psPowSyncPrim,
 			&psRGXFWInit->sPowerSync.ui32Addr);
-printk("++++++++++++++++++ %s psRGXFWInit->sPowerSync.ui32Addr %x psPowSyncPrim->pui32LinAddr %llx\n",
-		__FUNCTION__, psRGXFWInit->sPowerSync.ui32Addr,
-		virt_to_phys(psDevInfo->psPowSyncPrim->pui32LinAddr));
-//*psDevInfo->psPowSyncPrim->pui32LinAddr = 0x12345670;
-//SyncPrimSet(psDevInfo->psPowSyncPrim, 0x123456F0);
-
 	if (eError != PVRSRV_OK)
 	{
 		PVR_DPF((PVR_DBG_ERROR,
@@ -3065,9 +3046,6 @@ static PVRSRV_ERROR RGXSendCommandRaw(PVRSRV_RGXDEV_INFO 	*psDevInfo,
             ui32MTSRegVal = (RGXFWIF_DM_GP & ~RGX_CR_MTS_SCHEDULE_DM_CLRMSK) | RGX_CR_MTS_SCHEDULE_TASK_COUNTED;
         #endif
 
-            printk("%s cmdType %d ui32NewWriteOffset %d ui32WrapMask %d\n",
-        		    __FUNCTION__, psKCCBCmd->eCmdType, ui32NewWriteOffset,
-			    psKCCBCtl->ui32WrapMask);
         __MTSScheduleWrite(psDevInfo, ui32MTSRegVal);
 
         PDUMPREG32(RGX_PDUMPREG_NAME, RGX_CR_MTS_SCHEDULE, ui32MTSRegVal, uiPdumpFlags);

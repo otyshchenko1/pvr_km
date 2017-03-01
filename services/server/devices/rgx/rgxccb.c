@@ -58,11 +58,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "trace_events.h"
 #endif
 
-#include "devicemem.h"
-#include "devicemem_pdump.h"
-#include "devicemem_server.h"
-#include "devicemem_utils.h"
-
 /*
 *  Defines the number of fence updates to record so that future fences in the CCB
 *  can be checked to see if they are already known to be satisfied.
@@ -265,14 +260,12 @@ PVRSRV_ERROR RGXCreateCCB(PVRSRV_RGXDEV_INFO	*psDevInfo,
 								PVRSRV_MEMALLOCFLAG_ZERO_ON_ALLOC |
 								PVRSRV_MEMALLOCFLAG_KERNEL_CPU_MAPPABLE;
 
-	printk("Allocate RGXFW cCCB\n");
+	PDUMPCOMMENT("Allocate RGXFW cCCB");
 	eError = DevmemFwAllocate(psDevInfo,
 										ui32AllocSize,
 										uiClientCCBMemAllocFlags,
 										aszCCBRequestors[eRGXCCBRequestor][REQ_RGX_FW_CLIENT_CCB_STRING],
 										&psClientCCB->psClientCCBMemDesc);
-	printk("%s CPU %llx Dev %llx\n", __FUNCTION__, virt_to_phys(psClientCCB->psClientCCBMemDesc->sCPUMemDesc.pvCPUVAddr),
-			psClientCCB->psClientCCBMemDesc->sDeviceMemDesc.sDevVAddr.uiAddr);
 
 	if (eError != PVRSRV_OK)
 	{
@@ -291,14 +284,12 @@ PVRSRV_ERROR RGXCreateCCB(PVRSRV_RGXDEV_INFO	*psDevInfo,
 		goto fail_map_ccb;
 	}
 
-	printk("Allocate RGXFW cCCB control\n");
+	PDUMPCOMMENT("Allocate RGXFW cCCB control");
 	eError = DevmemFwAllocate(psDevInfo,
 										sizeof(RGXFWIF_CCCB_CTL),
 										uiClientCCBCtlMemAllocFlags,
 										aszCCBRequestors[eRGXCCBRequestor][REQ_RGX_FW_CLIENT_CCB_CONTROL_STRING],
 										&psClientCCB->psClientCCBCtrlMemDesc);
-	printk("%s CPU %llx Dev %llx\n", __FUNCTION__, virt_to_phys(psClientCCB->psClientCCBCtrlMemDesc->sCPUMemDesc.pvCPUVAddr),
-			psClientCCB->psClientCCBCtrlMemDesc->sDeviceMemDesc.sDevVAddr.uiAddr);
 
 	if (eError != PVRSRV_OK)
 	{
