@@ -500,7 +500,11 @@ IMG_UINT32 OSClockms(void)
 static inline IMG_UINT64 KClockns64(void)
 {
 	ktime_t sTime = ktime_get();
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 10, 0))
 	return sTime.tv64;
+#else
+	return sTime;
+#endif
 }
 
 PVRSRV_ERROR OSKClockns64(IMG_UINT64 *pui64Time)
