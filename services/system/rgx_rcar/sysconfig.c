@@ -45,6 +45,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <linux/clk.h>
 #include <linux/pm_runtime.h>
 
+#include <xen/xen.h>
+
 #include "pvrsrv_device.h"
 #include "syscommon.h"
 #if defined(SUPPORT_PVRSRV_GPUVIRT)
@@ -270,15 +272,17 @@ static PVRSRV_ERROR InitClocks(SYS_DATA *psSysData)
 {
 	struct platform_device *pdev = psSysData->pdev;
 
-	psSysData->psRGX_FCK = devm_clk_get(&pdev->dev, NULL);
-	if (IS_ERR(psSysData->psRGX_FCK))
+	if (xen_initial_domain())
 	{
-		PVR_DPF((PVR_DBG_ERROR, "clk_get failed. FCK=%p", psSysData->psRGX_FCK));
-		return PVRSRV_ERROR_UNABLE_TO_GET_CLOCK;
-        }
+		psSysData->psRGX_FCK = devm_clk_get(&pdev->dev, NULL);
+		if (IS_ERR(psSysData->psRGX_FCK))
+		{
+			PVR_DPF((PVR_DBG_ERROR, "clk_get failed. FCK=%p", psSysData->psRGX_FCK));
+			return PVRSRV_ERROR_UNABLE_TO_GET_CLOCK;
+		}
 
-	SetClocks(psSysData, RGX_3DGE_CORE_CLOCK_SPEED);
-
+		SetClocks(psSysData, RGX_3DGE_CORE_CLOCK_SPEED);
+	}
 	return PVRSRV_OK;
 }
 
