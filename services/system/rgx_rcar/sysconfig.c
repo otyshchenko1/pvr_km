@@ -290,12 +290,14 @@ static PVRSRV_ERROR DeinitClocks(SYS_DATA *psSysData)
 {
 	struct platform_device *pdev = psSysData->pdev;
 
-	if (psSysData->psRGX_FCK)
+	if (xen_initial_domain())
 	{
-		devm_clk_put(&pdev->dev, psSysData->psRGX_FCK);
-		psSysData->psRGX_FCK = NULL;
+		if (psSysData->psRGX_FCK)
+		{
+			devm_clk_put(&pdev->dev, psSysData->psRGX_FCK);
+			psSysData->psRGX_FCK = NULL;
+		}
 	}
-
 	return PVRSRV_OK;
 }
 
@@ -303,17 +305,20 @@ static PVRSRV_ERROR DeinitClocks(SYS_DATA *psSysData)
 static PVRSRV_ERROR EnableClocks(void)
 {
 	struct platform_device *pdev = gpsSysData->pdev;
-	int res;
 
-	res = pm_runtime_get_sync(&pdev->dev);
-	if (res < 0)
+	if (xen_initial_domain())
 	{
-		PVR_DPF((PVR_DBG_ERROR, "EnableClocks: pm_runtime_get_sync failed (%d)", res));
-		return PVRSRV_ERROR_UNABLE_TO_ENABLE_CLOCK;
+		int res;
+
+		res = pm_runtime_get_sync(&pdev->dev);
+		if (res < 0)
+		{
+			PVR_DPF((PVR_DBG_ERROR, "EnableClocks: pm_runtime_get_sync failed (%d)", res));
+			return PVRSRV_ERROR_UNABLE_TO_ENABLE_CLOCK;
+		}
+
+		SetClocks(gpsSysData, RGX_3DGE_CORE_CLOCK_SPEED);
 	}
-
-	SetClocks(gpsSysData, RGX_3DGE_CORE_CLOCK_SPEED);
-
 	return PVRSRV_OK;
 }
 
@@ -321,23 +326,27 @@ static
 PVRSRV_ERROR DisableClocks(void)
 {
 	struct platform_device *pdev = gpsSysData->pdev;
-        int res;
 
-        res = pm_runtime_put_sync(&pdev->dev);
-        if (res < 0)
-        {
-                PVR_DPF((PVR_DBG_ERROR, "DisableClocks: pm_runtime_put_sync failed (%d)", res));
-                return PVRSRV_ERROR_DISABLE_CLOCK_FAILURE;
-        }
+	if (xen_initial_domain())
+	{
+		int res;
 
-        return PVRSRV_OK;
+		res = pm_runtime_put_sync(&pdev->dev);
+		if (res < 0)
+		{
+			PVR_DPF((PVR_DBG_ERROR, "DisableClocks: pm_runtime_put_sync failed (%d)", res));
+			return PVRSRV_ERROR_DISABLE_CLOCK_FAILURE;
+		}
+	}
+	return PVRSRV_OK;
 }
 
 static PVRSRV_ERROR PMRuntimeRegister(void)
 {
 	struct platform_device *pdev = gpsSysData->pdev;
 
-        pm_runtime_enable(&pdev->dev);
+	if (xen_initial_domain())
+		pm_runtime_enable(&pdev->dev);
 
         return PVRSRV_OK;
 }
@@ -346,7 +355,8 @@ static PVRSRV_ERROR PMRuntimeUnregister(void)
 {
 	struct platform_device *pdev = gpsSysData->pdev;
 
-        pm_runtime_disable(&pdev->dev);
+	if (xen_initial_domain())
+		pm_runtime_disable(&pdev->dev);
 
         return PVRSRV_OK;
 }
