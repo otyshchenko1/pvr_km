@@ -1,0 +1,7 @@
+override SUPPORT_BUFFER_SYNC := 1
+override PKG_CONFIG_SYSROOT_DIR := /home/otyshchenko/work/projects/rcar_h3_2_0/build/tmp/sysroots/salvator-x
+override PKG_CONFIG_PATH := /home/otyshchenko/work/projects/rcar_h3_2_0/build/tmp/sysroots/salvator-x/usr/lib/pkgconfig:/home/otyshchenko/work/projects/rcar_h3_2_0/build/tmp/sysroots/salvator-x/usr/share/pkgconfig
+override SUPPORT_WRAPEXTMEM := 1
+override SUPPORT_EXTENSION_REL := 1
+override SUPPORT_EGL_EXTENSION_GET_MEMINFO_REL := 1
+override ENABLE_DEBUG_LOG_COMMON_REL := 1
